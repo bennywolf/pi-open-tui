@@ -132,7 +132,7 @@ export default function (pi: ExtensionAPI) {
 		}
 		if (!active) {
 			cleanupHeader = installHeader(pi, ctx);
-			cleanupFooter = installFooter(
+			const footer = installFooter(
 				ctx,
 				() => state,
 				() => config,
@@ -146,7 +146,17 @@ export default function (pi: ExtensionAPI) {
 					},
 				},
 			);
-			editor = installEditor(pi, ctx, config.cursorStyle, config.fullscreen.wheelScrollLines);
+			cleanupFooter = footer.cleanup;
+			editor = installEditor(
+				pi,
+				ctx,
+				config.cursorStyle,
+				config.fullscreen.wheelScrollLines,
+				{
+					enabled: () => config.inlineFooter,
+					render: footer.renderInline,
+				},
+			);
 			active = true;
 		}
 	};
